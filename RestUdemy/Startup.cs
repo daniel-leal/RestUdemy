@@ -6,10 +6,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RestUdemy.Models.Context;
+using RestUdemy.Services;
+using RestUdemy.Services.Implementations;
 
 namespace RestUdemy
 {
@@ -25,7 +29,18 @@ namespace RestUdemy
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // Database Configuration
+            var connection = Configuration["ConnectionStrings:SqlServer"];
+            services.AddDbContext<RestUdemyContext>(options => options.UseSqlServer(connection));
+
+            //services.AddMvc();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddApiVersioning();
+
+            //Dependency Injection
+            services.AddScoped<IPersonBusiness, PersonBusinessImpl>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
